@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+import copy
+
 ###############################################
 # http://people.csail.mit.edu/bdean/6.046/dp/ #
 ###############################################
@@ -21,31 +23,25 @@ class MaxValContSub:
 	"""
 
 	def solve(self, array):
-		curr_sub     = [array[0]]
-		subs         = [curr_sub]
-		original     = []
-		curr_max     = 0
-		curr_max_idx = 0
+		if not array:
+			return None
 
-		for i in range(len(array)):
-			original.append(array[i])
-			if i > 0:
-				if array[i - 1] + array[i] >= array[i]:
-					# current sequence continues
-					array[i] = array[i - 1] + array[i]
-					if array[i] >= array[i-1]:
-						curr_sub.append(original[i])
-					else:
-						curr_sub = [original[i]]
-				else:
-					# new sequence begins
-					curr_sub = [original[i]]
-				subs.append(curr_sub)
-			if array[i] >= curr_max:
-				curr_max = array[i]
-				curr_max_idx = i
-		#return array, subs
-		return curr_max, subs[curr_max_idx]
+		maxAtIdx = copy.copy(array)
+		leftBounds = [0]*len(array)
+
+		for i in range(1, len(array)):
+			if maxAtIdx[i-1] + array[i] > array[i]:
+				maxAtIdx[i] = maxAtIdx[i-1] + array[i]
+				leftBounds[i] = leftBounds[i-1]
+			else:
+				maxAtIdx[i] = array[i]
+				leftBounds[i] = i
+
+		maxSum = max(maxAtIdx)
+		rightIdx = maxAtIdx.index(maxSum)
+		leftIdx = leftBounds[rightIdx]
+
+		return maxSum, leftIdx, rightIdx
 
 	def test(self):
 		array = [1, 2, -30, 4, 5, -22, 3, 4, 5]
