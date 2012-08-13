@@ -54,7 +54,7 @@ def main(n):
 	if n < 1:
 		raise ValueError("Input must be an int >= 1.")
 
-	smallUpperBound = pow(10,int(math.floor(math.log10(n))))
+	smallUpperBound = pow(10,int(math.log10(n)))
 	if tens == 0:
 		upperBound = 10
 	elif n <= smallUpperBound:
