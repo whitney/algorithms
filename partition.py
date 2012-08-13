@@ -13,57 +13,33 @@ the upper bound is 10000 and the output is
 10000/10 = 1000.
 
 The "upper bound" is discovered by computing 
-the log base-10 of n, then calculating the 
-values referred to as tenCeil and fiveCeil.
-tenCeil values are of the form 10^p, fiveCeil 
-values are of the form 5*tenCeil.
-
-tenCeil and fiveCeil are the potential upper
-bounds of the input n. Since tenCeil is the 
-smaller upper bound, if n <= tenCeil, then 
-tenCeil is considered the true upper bound. 
-If tenCeil is not the upper bound we check if 
-fiveCeil is. If fiveCeil is not the upper 
-bound for n (ie the fiveCeil for n = 501 is 500) 
-then the output is equal to tenCeil (which in 
-this case is 10^2=100).
+the log base-10 of n--call this value l--then determining 
+which of the following is the smallest upper bound
+of n: [10, 10^l, 5*(10^l), 10*(10^l)].
 """
 
-def mainBak(n):
-	# How many "tens" are in this number?
-	# The number of tens in a number n is 
-	# defined as the number t such that 
-	# n = 10^t + a, where 10^(t+1) > n. 
-	tens = int(math.floor(math.log10(n)))
-	print ">>> tens: %s" % tens
-
-	if tens == 0:
-		return 1
-
-	tenCeil = pow(10,tens)
-	if n <= tenCeil:
-		return tenCeil/10
-
-	fiveCeil = 5*tenCeil
-	if n <= fiveCeil:
-		return fiveCeil/10
-
-	return tenCeil
+SCAL_QUOTIENT = 10
 
 def main(n):
 	if n < 1:
 		raise ValueError("Input must be an int >= 1.")
 
-	smallUpperBound = pow(10,int(math.log10(n)))
-	if tens == 0:
-		upperBound = 10
-	elif n <= smallUpperBound:
-		upperBound = smallUpperBound
-	elif n <= 5*smallUpperBound:
-		upperBound = 5*smallUpperBound
+	upperBound0 = 10
+	upperBound1 = pow(10,int(math.log10(n)))
+	upperBound2 = 5*upperBound1
+
+	if n <= upperBound0:
+		# n in [1, 10]
+		return upperBound0/SCAL_QUOTIENT
+	elif n <= upperBound1:
+		# n in [11, 10^l]
+		return upperBound1/SCAL_QUOTIENT
+	elif n <= upperBound2:
+		# n in (10^l, 5*10^l]
+		return upperBound2/SCAL_QUOTIENT
 	else:
-		upperBound = 10*smallUpperBound
-	return upperBound/10
+		# n in (5*10^l, 10*10^l]
+		return upperBound1
 
 if __name__ == "__main__":
 	if len(sys.argv) != 2:
